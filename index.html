@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><?= title ?></title>
+  </head>
+  <body>
+    <h1><?= title ?></h1>
+    <h2>発表者：<?= presenters.length ?>名</h2>
+    <ul>
+      <? for (i in presenters) { ?>
+        <li>
+          <?= presenters[i]['発表タイトル']; ?> （<?= presenters[i]['お名前']; ?>） <?= presenters[i]['発表時間']; ?>
+          <? if (presenters[i]['概要']) { ?>
+            <br><?!= presenters[i]['概要'].replace(/\n/g, '<br>'); ?>
+          <? } ?>
+        </li>
+      <? } ?>
+    </ul>
+    <? if (presenters.length <= 4) { ?>
+      <p>発表者募集中！</p>
+    <? } ?>
+    <h2>参加者：<?= participant_count ?>名</h2>
+  </body>
+</html>
+
+
