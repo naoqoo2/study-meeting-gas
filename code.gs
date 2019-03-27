@@ -1,18 +1,24 @@
 // リソース→ライブラリで下記を追加する必要があります
 //   Moment.js：MHMchiX6c1bwSqGM1PZiW_PxhMjh3Sh48
 
-var EVENT_NAME = '社内勉強会';
-var EVENT_CALENDAR_ID = '{メールアドレス}';
-var TEMPLATE_FORM_ID = '{フォームのID}';
-var BASE_FOLDER_ID = '{フォーム出力先のドライブフォルダID}';
-var WEB_PAGE_URL = '{このスクリプトのウェブアプリケーションURL}'
+// イベント名
+var EVENT_NAME = '勉強会';
+// イベントを登録するユーザーアカウント（メールアドレス）
+var EVENT_ACCOUNT = PropertiesService.getScriptProperties().getProperty('EVENT_ACCOUNT');
+// テンプレートとなるフォームのID
+var TEMPLATE_FORM_ID = PropertiesService.getScriptProperties().getProperty('TEMPLATE_FORM_ID');
+// フォーム出力先のドライブフォルダID
+var BASE_FOLDER_ID = PropertiesService.getScriptProperties().getProperty('BASE_FOLDER_ID');
+// このスクリプトのウェブアプリケーションURL
+var WEB_PAGE_URL = PropertiesService.getScriptProperties().getProperty('WEB_PAGE_URL');
 
-var MAIL_TO = '{宛先To}';
-var MAIL_CC = '{宛先Cc}';
-var REPLY_TO = '{返信先}';
+// メール情報
+var MAIL_TO = PropertiesService.getScriptProperties().getProperty('MAIL_TO');
+var MAIL_CC = PropertiesService.getScriptProperties().getProperty('MAIL_CC');
 var FROM_NAME = EVENT_NAME + '実行委員';
 
-var DO_SEND_MAIL = true;
+// メールを送るか
+var ENABLE_SEND_MAIL = true;
 
 function cron() {
   // 今月のイベント取得
@@ -104,9 +110,9 @@ function getEventForThisMonth() {
   var first_date_of_this_month = Moment.moment().startOf('month');
   var last_date_of_this_month = Moment.moment().endOf('month');
 
-  var calender = CalendarApp.getCalendarById(EVENT_CALENDAR_ID);
+  var calender = CalendarApp.getCalendarById(EVENT_ACCOUNT);
   var events = calender.getEvents(new Date(first_date_of_this_month.format('YYYY/MM/DD')), new Date(last_date_of_this_month.format('YYYY/MM/DD')), {search: EVENT_NAME});
-
+Logger.log(events);
   for(var i = 0; i < events.length; i++) {
     // 名称が完全一致した最初のイベントを返す
     if (events[i].getTitle() == EVENT_NAME) {
@@ -219,14 +225,12 @@ function sendCancelMail(form, event) {
 }
 
 function sendMail(subject, body, mail_to) {
-  if (!DO_SEND_MAIL) {
+  if (!ENABLE_SEND_MAIL) {
     return;
   }
   
   var options = {
-//    from: REPLY_TO, // 変えたいけどエラーになっちゃう
     cc: MAIL_CC,
-    replyTo: REPLY_TO,
     name: FROM_NAME
   };
 
